@@ -1,17 +1,17 @@
 <template>
   <div>
-    <home-title></home-title>
+    <tabbar></tabbar>
     <div>{{ msg }}</div>
     <button @click="toLogin">Login_page</button>
   </div>
 </template>
 
 <script>
-import HomeTitle from "/components/home/HomeTitle.vue"
+import Tabbar from "/components/common/Tabbar.vue"
 export default {
-  name: 'home',
+  name: 'Home',
   components: {
-    HomeTitle
+    Tabbar
   },
   data() {
     return {
