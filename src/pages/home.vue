@@ -8,6 +8,7 @@
 
 <script>
 import Tabbar from "/components/common/Tabbar.vue"
+
 export default {
   name: 'Home',
   components: {
