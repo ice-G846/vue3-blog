@@ -5,27 +5,28 @@
 </template>
 
 <script>
-// http://www.jufu-unique.com/app.php/Goods/getRebateRule
-import { reactive, getCurrentInstance, onMounted } from "vue";
-
+// import { reactive, getCurrentInstance, onMounted } from "vue";
+import { getMsg } from '/@/request/api.js'
 export default {
   name: 'Tabbar',
-  setup() {
-    let { proxy } = getCurrentInstance();
-
-    let data = reactive({
-      name: "hello"
-    });
-
-    onMounted(() => {
-      console.log(proxy.$axios)
-      proxy.$axios.get('http://www.jufu-unique.com/app.php/Goods/getRebateRule')
-        .then(res => {
-          console.log(res)
-        })
-    });
-
-    return { data, proxy };
+  // setup() {
+  //   let { proxy } = getCurrentInstance();
+  //   let data = reactive({
+  //     name: "hello"
+  //   });
+  //   onMounted(() => {
+  //     console.log(proxy.$axios)
+  //     proxy.$axios.get('http://www.jufu-unique.com/app.php/Goods/getRebateRule')
+  //       .then(res => {
+  //         console.log(res)
+  //       })
+  //   });
+  //   return { data, proxy };
+  // },
+  created() {
+    getMsg().then(res => {
+      console.log(res)
+    })
   }
 }
 
