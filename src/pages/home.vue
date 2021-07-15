@@ -1,32 +1,28 @@
 <template>
-  <div>
-    <tabbar></tabbar>
-    <div>{{ msg }}</div>
-    <button @click="toLogin">Login_page</button>
+  <div class="content">
+    <div class="content-title">{{ msg }}</div>
   </div>
 </template>
 
 <script>
-import Tabbar from "/components/common/Tabbar.vue"
 
 export default {
   name: 'Home',
   components: {
-    Tabbar
   },
   data() {
     return {
-      msg: 'home'
+      msg: 'home-page'
     }
   },
   methods: {
-    toLogin () {
-      this.$router.push('/login')
-    }
   }
 }
 </script>
 
-<style>
-
+<style lang="scss" scoped>
+  .content-title{
+    padding-top: 20px;
+    text-align: center;
+  }
 </style>

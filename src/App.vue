@@ -1,13 +1,14 @@
 <template>
+  <tabbar></tabbar>
   <router-view></router-view>
 </template>
 
 <script>
-import home from './pages/home.vue'
+import Tabbar from "/components/common/Tabbar.vue"
 export default {
   name: 'App',
   components: {
-    home
+    Tabbar
   }
 }
 </script>
