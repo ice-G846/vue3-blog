@@ -11,11 +11,29 @@
       <el-button class="tabbar-search-button" icon="el-icon-search" circle></el-button>
     </div>
     <div class="tabbar-login flex-row flex-ac">
-      <a class="tabbar-login-login flex-row flex-ac" @click="login">登录</a>
+      <a class="tabbar-login-login flex-row flex-ac" @click="toLogin">登录</a>
       <span class="tabbar-login-cut">|</span>
-      <a class="tabbar-login-register flex-row flex-ac" @click="register">注册</a>
+      <a class="tabbar-login-register flex-row flex-ac" @click="toRegister">注册</a>
     </div>
   </div>
+  <el-dialog width="400px" v-model="modelShow">
+    <el-form ref="form" :model="form" size="small" label-width="100px">
+      <el-row class="dialog-item">
+        <span class="dialog-title">手机号验证码登录</span>
+      </el-row>
+      <el-row class="dialog-item">
+        <span>手机号：</span>
+        <el-input class="search-input" v-model="form.user"></el-input>
+      </el-row>
+      <el-row class="dialog-item">
+        <span>验证码：</span>
+        <el-input class="search-input" v-model="form.pwd"></el-input>
+      </el-row>
+    </el-form>
+    <div class="dialog-footer">
+      <el-button type="primary" @click="login('form')">确 定</el-button>
+    </div>
+  </el-dialog>
 </template>
 
 <script>
@@ -24,7 +42,13 @@ export default {
   name: 'Tabbar',
   data() {
     return {
-      input: ''
+      input: '',
+      //是否显示本面板
+      modelShow: true,
+      form: {
+        user: '',
+        pwd: null
+      }
     }
   },
   created() {
@@ -34,8 +58,8 @@ export default {
   },
   methods: {
     // 登录
-    login() {
-      console.log('login')
+    toLogin() {
+      this.modelShow = true
     },
     // 注册
     register() {
@@ -44,6 +68,12 @@ export default {
     // 栏目列表点击
     tabbarClick(index) {
       console.log(index)
+    },
+    closeCallback() {
+
+    },
+    login() {
+      this.modelShow = false
     }
   }
 }
@@ -116,5 +146,12 @@ export default {
 :deep(.tabbar-search-input){
   width: 250px;
   margin-right: 20px;
+}
+:deep(.dialog-item){
+  margin-bottom: 20px;
+}
+.dialog-title{
+  font-size: 20px;
+  font-weight: bold;
 }
 </style>
