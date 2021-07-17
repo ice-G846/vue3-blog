@@ -1,4 +1,5 @@
 <template>
+  <!-- tabbar导航栏 -->
   <div class="tabbar flex-row flex-jc">
     <div class="tabbar-logo flex-row flex-ac">
       <img class="tabbar-logo-img" src="/@/assets/logo.png" alt="logo">
@@ -16,50 +17,150 @@
       <a class="tabbar-login-register flex-row flex-ac" @click="toRegister">注册</a>
     </div>
   </div>
-  <el-dialog width="400px" v-model="modelShow">
-    <el-form ref="form" :model="form" size="small" label-width="100px">
+  <!-- 登录框 -->
+  <el-dialog width="400px" v-model="modelShow" @closed="closeForm">
+    <el-form status-icon ref="ruleForm" :model="form">
       <el-row class="dialog-item">
-        <span class="dialog-title">手机号验证码登录</span>
+        <span class="dialog-title" :class="loginType == 1 ? 'login-select': ''" @click="smsLogin">验证码登录</span>
+        <span class="dialog-title-cut">|</span>
+        <span class="dialog-title" :class="loginType == 2 ? 'login-select': ''" @click="pwdLogin">密码登录</span>
       </el-row>
-      <el-row class="dialog-item">
-        <span>手机号：</span>
-        <el-input class="search-input" v-model="form.user"></el-input>
-      </el-row>
-      <el-row class="dialog-item">
-        <span>验证码：</span>
-        <el-input class="search-input" v-model="form.pwd"></el-input>
-      </el-row>
+      <div class="dialog-box" v-if="loginType === 1">
+        <p class="dialog-item-label">手机号：</p>
+        <el-row class="dialog-item">
+          <el-input class="search-input" v-model="form.phone" placeholder="+86"></el-input>
+        </el-row>
+        <p class="dialog-item-label">验证码：</p>
+        <el-row class="dialog-item flex-row flex-jsb">
+          <el-input class="dialog-item-code" v-model="form.code" placeholder="请输入验证码"></el-input>
+          <el-button v-show="isGetCode" @click="sendCode" class="dialog-item-getcode" type="primary">发送验证码</el-button>
+          <el-button v-show="!isGetCode" class="dialog-item-getcode" disabled type="primary">{{ getCodeTime }}秒后重新发送</el-button>
+        </el-row>
+      </div>
+      <div class="dialog-box" v-if="loginType === 2">
+        <p class="dialog-item-label">手机号：</p>
+        <el-row class="dialog-item">
+          <el-input class="search-input" v-model="form.phone" placeholder="+86"></el-input>
+        </el-row>
+        <p class="dialog-item-label">密码：</p>
+        <el-row class="dialog-item flex-row flex-jsb">
+          <el-input class="search-input" type="password" v-model="form.pwd" placeholder="请输入密码"></el-input>
+        </el-row>
+      </div>
     </el-form>
     <div class="dialog-footer">
-      <el-button type="primary" @click="login('form')">确 定</el-button>
+      <el-button class="dialog-register" type="primary" @click="login(form)">确 定</el-button>
     </div>
+  </el-dialog>
+  <!-- 注册框 -->
+  <el-dialog width="400px" v-model="modelShow2" @closed="closeForm">
+    <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+      <el-row class="dialog-item">
+        <span class="dialog-title2 login-select">注册账号</span>
+      </el-row>
+      <el-form-item label="手机号：" prop="age">
+        <el-input v-model.number="ruleForm.age"></el-input>
+      </el-form-item>
+      <el-form-item label="密码：" prop="pass">
+        <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="确认密码：" prop="checkPass">
+        <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="验证码">
+        <el-row class="dialog-item flex-row flex-jsb">
+          <el-input class="dialog-item-code2" v-model="form.code" placeholder="请输入验证码"></el-input>
+          <!-- 注册验证码还没做好！！ -->
+          <el-button v-show="isGetCode2" @click="sendCode2" class="dialog-item-getcode2" type="primary">发送验证码</el-button>
+          <el-button v-show="!isGetCode2" class="dialog-item-getcode" disabled type="primary">{{ getCodeTime2 }}秒后重新发送</el-button>
+        </el-row>
+      </el-form-item>
+      <el-button class="register-submit" type="primary" @click="submitForm('ruleForm')">注册</el-button>
+    </el-form>
   </el-dialog>
 </template>
 
 <script>
-import { getMsg } from '/@/request/api.js'
+import {} from '/@/request/api.js'
 export default {
   name: 'Tabbar',
   data() {
-    return {
-      input: '',
-      //是否显示本面板
-      modelShow: true,
-      form: {
-        user: '',
-        pwd: null
+    var checkAge = (rule, value, callback) => {
+      var mobile_mode=/^1[34578]\d{9}$/;
+      if (!mobile_mode.test(value)) {
+        return callback(new Error('请输入正确的手机号'))
+      } else {
+        callback()
       }
     }
-  },
-  created() {
-    getMsg().then(res => {
-      console.log(res)
-    })
+    var validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入密码'));
+      } else {
+        if (this.ruleForm.checkPass !== '') {
+          this.$refs.ruleForm.validateField('checkPass');
+        }
+        callback();
+      }
+    };
+    var validatePass2 = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请再次输入密码'));
+      } else if (value !== this.ruleForm.pass) {
+        callback(new Error('两次输入密码不一致!'));
+      } else {
+        callback();
+      }
+    }
+    return {
+      input: '',
+      // 是否显示登录面板
+      modelShow: false,
+      // 是否显示注册面板
+      modelShow2: true,
+      // 登录表单
+      form: {
+        phone: null,
+        code: null,
+        pwd: null
+      },
+      // 验证码时间切换
+      isGetCode: true,
+      isGetCode2: true,
+      getCodeTime: 60,
+      getCodeTime2: 60,
+      loginType: 1, // 1————验证码登录 2————密码登录
+      // 注册表单+验证
+      ruleForm: {
+        pass: '',
+        checkPass: '',
+        age: ''
+      },
+      rules: {
+        pass: [
+          { validator: validatePass, trigger: 'blur' }
+        ],
+        checkPass: [
+          { validator: validatePass2, trigger: 'blur' }
+        ],
+        age: [
+          { validator: checkAge, trigger: 'blur' }
+        ]
+      }
+    }
   },
   methods: {
     // 登录
     toLogin() {
       this.modelShow = true
+    },
+    // 选择登录方式————验证码登录
+    smsLogin() {
+      this.loginType = 1
+    },
+    // 选择登录方式————密码登录
+    pwdLogin() {
+      this.loginType = 2
     },
     // 注册
     register() {
@@ -69,11 +170,85 @@ export default {
     tabbarClick(index) {
       console.log(index)
     },
-    closeCallback() {
-
+    // 登录
+    login(form) {
+      if (this.loginType === 1) {
+        // 验证码登录
+        var mobile_mode=/^1[34578]\d{9}$/;
+        if (!mobile_mode.test(this.form.phone)) {
+          this.$message({
+            type: 'info',
+            message: '请输入正确的手机号'
+          })
+        } else {
+          console.log(form)
+          this.modelShow = false
+        }
+      } else {
+        // 手机号登录
+        var mobile_mode=/^1[34578]\d{9}$/;
+        if (!mobile_mode.test(this.form.phone)) {
+          this.$message({
+            type: 'info',
+            message: '请输入正确的手机号'
+          })
+        } else {
+          console.log(form)
+          this.modelShow = false
+        }
+      }
     },
-    login() {
-      this.modelShow = false
+    // 发送登录验证码
+    sendCode() {
+      var mobile_mode=/^1[34578]\d{9}$/;
+      if (!mobile_mode.test(this.form.phone)) {
+        this.$message({
+            type: 'info',
+            message: '请输入正确的手机号'
+          })
+      } else {
+        // 60秒内不允许再发送验证码
+        const TIME_COUNT = 60;
+        if (!this.timer) {
+          this.getCodeTime = TIME_COUNT;
+          this.isGetCode = false;
+          this.timer = setInterval(() => {
+            if (this.getCodeTime > 0 && this.getCodeTime <= TIME_COUNT) {
+              this.getCodeTime--;
+            } else {
+              this.isGetCode = true;
+              clearInterval(this.timer);
+              this.timer = null;
+            }
+          }, 1000)
+        }
+      }
+    },
+    // 发送注册验证码
+    sendCode2() {},
+    // 关闭登录弹窗
+    closeForm() {
+      this.form = {
+        phone: null,
+        code: null,
+        pwd: null
+      }
+      this.loginType = 1
+    },
+    // 注册
+    toRegister() {
+      this.modelShow2 = true
+    },
+    // 注册提交
+    submitForm(formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
+          alert('submit!');
+        } else {
+          console.log('error submit!!');
+          return false;
+        }
+      });
     }
   }
 }
@@ -142,6 +317,36 @@ export default {
       }
     }
   }
+.dialog{
+  &-title{
+    color: #b3b3b3;
+    font-size: 20px;
+    font-weight: bold;
+    &:hover{
+      cursor: pointer;
+    }
+    &-cut{
+      font-size: 20px;
+      margin: 0 10px;
+    }
+  }
+  &-title2{
+    color: #b3b3b3;
+    font-size: 20px;
+    font-weight: bold;
+    margin-left: 10px;
+  }
+  &-item{
+    &-label{
+      margin-bottom: 10px;
+    }
+  }
+}
+// 登录方式选中样式
+.login-select{
+  color: #606266;
+}
+
 // 修改el组件样式
 :deep(.tabbar-search-input){
   width: 250px;
@@ -150,8 +355,26 @@ export default {
 :deep(.dialog-item){
   margin-bottom: 20px;
 }
-.dialog-title{
-  font-size: 20px;
-  font-weight: bold;
+:deep(.dialog-register){
+  margin-top: 10px;
+  width: 360px;
+}
+:deep(.dialog-item-code){
+  width: 220px;
+}
+:deep(.dialog-item-getcode){
+  width: 130px;
+}
+:deep(.dialog-item-code2){
+  width: 120px;
+}
+:deep(.dialog-item-getcode2){
+  width: 100px;
+}
+:deep(.register-submit){
+  width: 360px;
+}
+:deep(.el-form-item__label){
+  text-align: center;
 }
 </style>
