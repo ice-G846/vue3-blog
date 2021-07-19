@@ -58,8 +58,8 @@
       <el-row class="dialog-item">
         <span class="dialog-title2 login-select">注册账号</span>
       </el-row>
-      <el-form-item label="手机号：" prop="age">
-        <el-input v-model.number="ruleForm.age"></el-input>
+      <el-form-item label="手机号：" prop="phone">
+        <el-input v-model.number="ruleForm.phone"></el-input>
       </el-form-item>
       <el-form-item label="密码：" prop="pass">
         <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
@@ -67,9 +67,9 @@
       <el-form-item label="确认密码：" prop="checkPass">
         <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="验证码">
+      <el-form-item label="验证码" prop="code">
         <el-row class="dialog-item flex-row flex-jsb">
-          <el-input class="dialog-item-code2" v-model="form.code" placeholder="请输入验证码"></el-input>
+          <el-input class="dialog-item-code2" v-model="ruleForm.code" placeholder="请输入验证码"></el-input>
           <!-- 注册验证码还没做好！！ -->
           <el-button v-show="isGetCode2" @click="sendCode2" class="dialog-item-getcode2" type="primary">发送验证码</el-button>
           <el-button v-show="!isGetCode2" class="dialog-item-getcode" disabled type="primary">{{ getCodeTime2 }}秒后重新发送</el-button>
@@ -102,7 +102,7 @@ export default {
         }
         callback();
       }
-    };
+    }
     var validatePass2 = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请再次输入密码'));
@@ -129,12 +129,15 @@ export default {
       isGetCode2: true,
       getCodeTime: 60,
       getCodeTime2: 60,
+      timer: null,
+      timer2: null,
       loginType: 1, // 1————验证码登录 2————密码登录
       // 注册表单+验证
       ruleForm: {
         pass: '',
         checkPass: '',
-        age: ''
+        phone: '',
+        code: ''
       },
       rules: {
         pass: [
@@ -143,7 +146,7 @@ export default {
         checkPass: [
           { validator: validatePass2, trigger: 'blur' }
         ],
-        age: [
+        phone: [
           { validator: checkAge, trigger: 'blur' }
         ]
       }
@@ -181,6 +184,7 @@ export default {
             message: '请输入正确的手机号'
           })
         } else {
+          delete this.form.pwd
           console.log(form)
           this.modelShow = false
         }
@@ -193,6 +197,7 @@ export default {
             message: '请输入正确的手机号'
           })
         } else {
+          delete this.form.code
           console.log(form)
           this.modelShow = false
         }
@@ -225,7 +230,32 @@ export default {
       }
     },
     // 发送注册验证码
-    sendCode2() {},
+    sendCode2() {
+      var mobile_mode=/^1[34578]\d{9}$/;
+      console.log(this.ruleForm.phone)
+      if (!mobile_mode.test(this.ruleForm.phone)) {
+        this.$message({
+            type: 'info',
+            message: '请输入正确的手机号'
+          })
+      } else {
+        // 60秒内不允许再发送验证码
+        const TIME_COUNT = 60;
+        if (!this.timer2) {
+          this.getCodeTime2 = TIME_COUNT;
+          this.isGetCode2 = false;
+          this.timer2 = setInterval(() => {
+            if (this.getCodeTime2 > 0 && this.getCodeTime2 <= TIME_COUNT) {
+              this.getCodeTime2--;
+            } else {
+              this.isGetCode2 = true;
+              clearInterval(this.timer2);
+              this.timer2 = null;
+            }
+          }, 1000)
+        }
+      }
+    },
     // 关闭登录弹窗
     closeForm() {
       this.form = {
@@ -243,7 +273,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          alert('submit!');
+          console.log(this.ruleForm)
         } else {
           console.log('error submit!!');
           return false;
