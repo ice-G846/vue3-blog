@@ -11,5 +11,6 @@ module.exports = {
     scss: {
       additionalData: '@import "./src/assets/style/reset.scss";' // 添加公共样式
     }
-  }
+  },
+  port: 8080,
 }

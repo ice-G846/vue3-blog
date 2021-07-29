@@ -117,7 +117,7 @@ export default {
       // 是否显示登录面板
       modelShow: false,
       // 是否显示注册面板
-      modelShow2: true,
+      modelShow2: false,
       // 登录表单
       form: {
         phone: null,
@@ -232,7 +232,6 @@ export default {
     // 发送注册验证码
     sendCode2() {
       var mobile_mode=/^1[34578]\d{9}$/;
-      console.log(this.ruleForm.phone)
       if (!mobile_mode.test(this.ruleForm.phone)) {
         this.$message({
             type: 'info',
