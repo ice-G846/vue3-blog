@@ -21,8 +21,8 @@
   <el-dialog width="400px" v-model="modelShow" @closed="closeForm">
     <el-form status-icon ref="ruleForm" :model="form">
       <el-row class="dialog-item">
-        <span class="dialog-title" :class="loginType == 1 ? 'login-select': ''" @click="smsLogin">验证码登录</span>
-        <span class="dialog-title-cut">|</span>
+        <!-- <span class="dialog-title" :class="loginType == 1 ? 'login-select': ''" @click="smsLogin">验证码登录</span>
+        <span class="dialog-title-cut">|</span> -->
         <span class="dialog-title" :class="loginType == 2 ? 'login-select': ''" @click="pwdLogin">密码登录</span>
       </el-row>
       <div class="dialog-box" v-if="loginType === 1">
@@ -33,8 +33,8 @@
         <p class="dialog-item-label">验证码：</p>
         <el-row class="dialog-item flex-row flex-jsb">
           <el-input class="dialog-item-code" v-model="form.code" placeholder="请输入验证码"></el-input>
-          <el-button v-show="isGetCode" @click="sendCode" class="dialog-item-getcode" type="primary">发送验证码</el-button>
-          <el-button v-show="!isGetCode" class="dialog-item-getcode" disabled type="primary">{{ getCodeTime }}秒后重新发送</el-button>
+          <el-button v-show="isGetCode" @click="sendCode" class="dialog-item-getcode" type="info">发送验证码</el-button>
+          <el-button v-show="!isGetCode" class="dialog-item-getcode" disabled type="info">{{ getCodeTime }}秒后重新发送</el-button>
         </el-row>
       </div>
       <div class="dialog-box" v-if="loginType === 2">
@@ -46,10 +46,24 @@
         <el-row class="dialog-item flex-row flex-jsb">
           <el-input class="search-input" type="password" v-model="form.pwd" placeholder="请输入密码"></el-input>
         </el-row>
+        <p class="dialog-item-label">验证码：</p>
+        <el-row class="dialog-item flex-row flex-jsb">
+          <el-input class="dialog-item-code" v-model="form.code" placeholder="请输入验证码"></el-input>
+          <el-button v-show="isGetCode" @click="changeCode" class="dialog-item-getcode" type="info">(验证码图片)</el-button>
+        </el-row>
       </div>
     </el-form>
     <div class="dialog-footer">
-      <el-button class="dialog-register" type="primary" @click="login(form)">确 定</el-button>
+      <el-button class="dialog-register" type="info" @click="login(form)">确 定</el-button>
+    </div>
+    <!-- qq 微信登录 -->
+    <div class="dialog-bottom flex-row flex-jc">
+      <div class="dialog-bottom-item flex-row flex-jc">
+        <span class="dialog-bottom-item-icon iconfont">&#xe63c;</span>
+      </div>
+      <div class="dialog-bottom-item flex-row flex-jc">
+        <span class="dialog-bottom-item-icon iconfont">&#xe61a;</span>
+      </div>
     </div>
   </el-dialog>
   <!-- 注册框 -->
@@ -70,12 +84,11 @@
       <el-form-item label="验证码" prop="code">
         <el-row class="dialog-item flex-row flex-jsb">
           <el-input class="dialog-item-code2" v-model="ruleForm.code" placeholder="请输入验证码"></el-input>
-          <!-- 注册验证码还没做好！！ -->
-          <el-button v-show="isGetCode2" @click="sendCode2" class="dialog-item-getcode2" type="primary">发送验证码</el-button>
-          <el-button v-show="!isGetCode2" class="dialog-item-getcode" disabled type="primary">{{ getCodeTime2 }}秒后重新发送</el-button>
+          <el-button v-show="isGetCode2" @click="sendCode2" class="dialog-item-getcode2" type="info">发送验证码</el-button>
+          <el-button v-show="!isGetCode2" class="dialog-item-getcode" disabled type="info">{{ getCodeTime2 }}秒后重新发送</el-button>
         </el-row>
       </el-form-item>
-      <el-button class="register-submit" type="primary" @click="submitForm('ruleForm')">注册</el-button>
+      <el-button class="register-submit" type="info" @click="submitForm('ruleForm')">注册</el-button>
     </el-form>
   </el-dialog>
 </template>
@@ -131,7 +144,7 @@ export default {
       getCodeTime2: 60,
       timer: null,
       timer2: null,
-      loginType: 1, // 1————验证码登录 2————密码登录
+      loginType: 2, // 1————验证码登录 2————密码登录
       // 注册表单+验证
       ruleForm: {
         pass: '',
@@ -203,6 +216,10 @@ export default {
         }
       }
     },
+    // 改变验证码
+    changeCode () {
+      console.log('变')
+    },
     // 发送登录验证码
     sendCode() {
       var mobile_mode=/^1[34578]\d{9}$/;
@@ -262,7 +279,7 @@ export default {
         code: null,
         pwd: null
       }
-      this.loginType = 1
+      this.loginType = 2
     },
     // 注册
     toRegister() {
@@ -292,7 +309,8 @@ export default {
       height: 72px;
       width: 200px; 
       &-img{
-        width: 160px;
+        width: 130px;
+        height: 72px;
       }
     }
     &-list{
@@ -368,6 +386,20 @@ export default {
   &-item{
     &-label{
       margin-bottom: 10px;
+    }
+  }
+  &-bottom{
+    height: 50px;
+    width: 70%;
+    margin: 0 auto;
+    &-item{
+      width: 50%;
+      margin-top: 20px;
+      &-icon{
+        cursor: pointer;
+        font-size: 40px;
+        color: #c2c2c2;
+      }
     }
   }
 }
