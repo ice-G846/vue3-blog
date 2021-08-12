@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import {} from '/@/request/api.js'
+import { register, captcha} from '/@/request/api.js'
 export default {
   name: 'Tabbar',
   data() {
@@ -165,6 +165,10 @@ export default {
       }
     }
   },
+  mounted() {
+    // 获取验证码图片
+    this.getCaptcha()
+  },
   methods: {
     // 登录
     toLogin() {
@@ -215,6 +219,12 @@ export default {
           this.modelShow = false
         }
       }
+    },
+    // 获取验证码图片
+    getCaptcha() {
+      captcha().then(res => {
+        console.log(res);
+      })
     },
     // 改变验证码
     changeCode () {

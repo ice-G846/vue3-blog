@@ -1,4 +1,6 @@
 import { get, post } from './http'
 
-// 获取信息
-export const getMsg = () => get('app.php/Goods/getRebateRule')
+// 注册用户
+export const register = () => post('api/login/register')
+// 验证码
+export const captcha = data => post('api/login/captcha', data)

@@ -6,9 +6,9 @@ import { Toast } from 'vant';
 
 // 环境的切换
 if (process.env.NODE_ENV == 'development') {
-  axios.defaults.baseURL = 'http://www.jufu-unique.com/';
+  axios.defaults.baseURL = 'https://xchoy.com/';
 } else if (process.env.NODE_ENV == 'production') {
-  axios.defaults.baseURL = 'http://www.jufu-unique.com/';
+  axios.defaults.baseURL = 'https://xchoy.com/';
 }
 // 设置默认的请求超时时间
 axios.defaults.timeout = 10000;
