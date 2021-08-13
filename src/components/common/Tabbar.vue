@@ -18,7 +18,7 @@
     </div>
   </div>
   <!-- 登录框 -->
-  <el-dialog width="400px" v-model="modelShow" @closed="closeForm">
+  <el-dialog width="400px" v-model="modelShow" @closed="closeForm" :key="timer">
     <el-form status-icon ref="ruleForm" :model="form">
       <el-row class="dialog-item">
         <!-- <span class="dialog-title" :class="loginType == 1 ? 'login-select': ''" @click="smsLogin">验证码登录</span>
@@ -49,7 +49,8 @@
         <p class="dialog-item-label">验证码：</p>
         <el-row class="dialog-item flex-row flex-jsb">
           <el-input class="dialog-item-code" v-model="form.code" placeholder="请输入验证码"></el-input>
-          <el-button v-show="isGetCode" @click="changeCode" class="dialog-item-getcode" type="info">(验证码图片)</el-button>
+          <img :src="captcha" alt="" class="dialog-item-getcode" @click="changeCaptcha">
+          <!-- <el-button v-show="isGetCode" @click="changeCode" class="dialog-item-getcode" type="info">(验证码图片)</el-button> -->
         </el-row>
       </div>
     </el-form>
@@ -67,7 +68,7 @@
     </div>
   </el-dialog>
   <!-- 注册框 -->
-  <el-dialog width="400px" v-model="modelShow2" @closed="closeForm">
+  <el-dialog width="400px" v-model="modelShow2" @closed="closeForm" :key="timer">
     <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
       <el-row class="dialog-item">
         <span class="dialog-title2 login-select">注册账号</span>
@@ -84,8 +85,9 @@
       <el-form-item label="验证码" prop="code">
         <el-row class="dialog-item flex-row flex-jsb">
           <el-input class="dialog-item-code2" v-model="ruleForm.code" placeholder="请输入验证码"></el-input>
-          <el-button v-show="isGetCode2" @click="sendCode2" class="dialog-item-getcode2" type="info">发送验证码</el-button>
-          <el-button v-show="!isGetCode2" class="dialog-item-getcode" disabled type="info">{{ getCodeTime2 }}秒后重新发送</el-button>
+          <img :src="captcha" alt="" class="dialog-item-getcode2" @click="changeCaptcha">
+          <!-- <el-button v-show="isGetCode2" @click="sendCode2" class="dialog-item-getcode2" type="info">发送验证码</el-button> -->
+          <!-- <el-button v-show="!isGetCode2" class="dialog-item-getcode" disabled type="info">{{ getCodeTime2 }}秒后重新发送</el-button> -->
         </el-row>
       </el-form-item>
       <el-button class="register-submit" type="info" @click="submitForm('ruleForm')">注册</el-button>
@@ -150,7 +152,9 @@ export default {
         pass: '',
         checkPass: '',
         phone: '',
-        code: ''
+        code: '',
+        captcha: '', // 验证码域名
+        timer: null // el-dialog缓存机制搞不了验证码刷新 绑定key可刷新
       },
       rules: {
         pass: [
@@ -222,9 +226,14 @@ export default {
     },
     // 获取验证码图片
     getCaptcha() {
-      captcha().then(res => {
-        console.log(res);
-      })
+      const num = Math.ceil(Math.random() * 100)
+      this.captcha = 'https://xchoy.com/api/login/captcha?' + num
+    },
+    // 变换验证码
+    changeCaptcha() {
+      const num = Math.ceil(Math.random() * 100)
+      this.captcha = 'https://xchoy.com/api/login/captcha?' + num
+      this.timer = new Date()
     },
     // 改变验证码
     changeCode () {
@@ -299,7 +308,17 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          console.log(this.ruleForm)
+          let data = {
+            phone: this.ruleForm.phone,
+            password: this.ruleForm.pass,
+            captcha: this.ruleForm.code
+          }
+          console.log(data)
+          register(data).then(res => {
+            console.log(res)
+          }).catch(err=> {
+            console.log(err)
+          })
         } else {
           console.log('error submit!!');
           return false;
