@@ -20,5 +20,6 @@ module.exports = {
 		//config.optimization.minimizer[0].options.terserOptions.compress.drop_console = true
 		// }
 	},
-  port: 8080,
+  open: true,
+  port: 8080
 }
