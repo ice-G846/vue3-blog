@@ -18,7 +18,7 @@
     </div>
   </div>
   <!-- 登录框 -->
-  <el-dialog width="400px" v-model="modelShow" @closed="closeForm" :key="timer">
+  <el-dialog width="400px" v-model="modelShow" :key="timer">
     <el-form status-icon ref="ruleForm" :model="form">
       <el-row class="dialog-item">
         <!-- <span class="dialog-title" :class="loginType == 1 ? 'login-select': ''" @click="smsLogin">验证码登录</span>
@@ -60,15 +60,15 @@
     <!-- qq 微信登录 -->
     <div class="dialog-bottom flex-row flex-jc">
       <div class="dialog-bottom-item flex-row flex-jc">
-        <span class="dialog-bottom-item-icon iconfont">&#xe63c;</span>
+        <span class="dialog-bottom-item-icon-qq iconfont">&#xe63c;</span>
       </div>
       <div class="dialog-bottom-item flex-row flex-jc">
-        <span class="dialog-bottom-item-icon iconfont">&#xe61a;</span>
+        <span class="dialog-bottom-item-icon-vx iconfont">&#xe61a;</span>
       </div>
     </div>
   </el-dialog>
   <!-- 注册框 -->
-  <el-dialog width="400px" v-model="modelShow2" @closed="closeForm" :key="timer">
+  <el-dialog width="400px" v-model="modelShow2" :key="timer">
     <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
       <el-row class="dialog-item">
         <span class="dialog-title2 login-select">注册账号</span>
@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import { register, captcha} from '/@/request/api.js'
+import { register, login} from '/@/request/api.js'
 export default {
   name: 'Tabbar',
   data() {
@@ -227,12 +227,12 @@ export default {
     // 获取验证码图片
     getCaptcha() {
       const num = Math.ceil(Math.random() * 100)
-      this.captcha = 'https://xchoy.com/api/login/captcha?' + num
+      this.captcha = 'https://xchoy.com/api.php/login/verify?' + num
     },
     // 变换验证码
     changeCaptcha() {
       const num = Math.ceil(Math.random() * 100)
-      this.captcha = 'https://xchoy.com/api/login/captcha?' + num
+      this.captcha = 'https://xchoy.com/api.php/login/verify?' + num
       this.timer = new Date()
     },
     // 改变验证码
@@ -244,9 +244,9 @@ export default {
       var mobile_mode=/^1[34578]\d{9}$/;
       if (!mobile_mode.test(this.form.phone)) {
         this.$message({
-            type: 'info',
-            message: '请输入正确的手机号'
-          })
+          type: 'info',
+          message: '请输入正确的手机号'
+        })
       } else {
         // 60秒内不允许再发送验证码
         const TIME_COUNT = 60;
@@ -275,7 +275,8 @@ export default {
           })
       } else {
         // 60秒内不允许再发送验证码
-        const TIME_COUNT = 60;
+        const TIME_COUNT 
+        = 60;
         if (!this.timer2) {
           this.getCodeTime2 = TIME_COUNT;
           this.isGetCode2 = false;
@@ -311,13 +312,30 @@ export default {
           let data = {
             phone: this.ruleForm.phone,
             password: this.ruleForm.pass,
-            captcha: this.ruleForm.code
+            code: this.ruleForm.code
           }
           console.log(data)
           register(data).then(res => {
             console.log(res)
+            // 注册成功
+            if(res.code === 0){
+              this.$message({
+                type: 'success',
+                message: res.msg
+              })
+              this.modelShow2 = false
+            } else {
+              // 注册失败
+              this.$message({
+                type: 'info',
+                message: res.msg
+              })
+            }
           }).catch(err=> {
-            console.log(err)
+            this.$message({
+              type: 'info',
+              message: err
+            })
           })
         } else {
           console.log('error submit!!');
@@ -424,10 +442,23 @@ export default {
     &-item{
       width: 50%;
       margin-top: 20px;
-      &-icon{
+      &-icon-qq{
+        cursor: pointer;
+        font-size: 45px;
+        color: #c2c2c2;
+        &:hover{
+          transition: all 0.5s;
+          color: rgb(0, 183, 255);
+        }
+      }
+      &-icon-vx{
         cursor: pointer;
         font-size: 40px;
         color: #c2c2c2;
+        &:hover{
+          transition: all 0.5s;
+          color: rgb(28, 190, 13);
+        }
       }
     }
   }
