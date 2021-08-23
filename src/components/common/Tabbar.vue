@@ -9,9 +9,16 @@
     </div>
     <div class="tabbar-search flex-row flex-ac">
       <el-input class="tabbar-search-input" v-model="input" placeholder="请输入内容"></el-input>
-      <el-button class="tabbar-search-button" icon="el-icon-search" circle></el-button>
+      <el-button class="tabbar-search-button" icon="el-icon-search"></el-button>
     </div>
-    <div class="tabbar-login flex-row flex-ac">
+    <div class="tabbar-login flex-row flex-jc flex-ac" v-if="isLogin">
+      <div class="tabbar-login-box flex-row flex-ac flex-jc">
+        <img class="tabbar-login-box-img" src="/@/assets/image/profile.png" alt="头像">
+      </div>
+      <div class="tabbar-login-bigbox">
+      </div>
+    </div>
+    <div class="tabbar-login flex-row flex-ac" v-if="!isLogin">
       <a class="tabbar-login-login flex-row flex-ac" @click="toLogin">登录</a>
       <span class="tabbar-login-cut">|</span>
       <a class="tabbar-login-register flex-row flex-ac" @click="toRegister">注册</a>
@@ -30,6 +37,7 @@
         <el-row class="dialog-item">
           <el-input class="search-input" v-model="form.phone" placeholder="+86"></el-input>
         </el-row>
+        <!-- 验证码栏块 -->
         <p class="dialog-item-label">验证码：</p>
         <el-row class="dialog-item flex-row flex-jsb">
           <el-input class="dialog-item-code" v-model="form.code" placeholder="请输入验证码"></el-input>
@@ -46,12 +54,12 @@
         <el-row class="dialog-item flex-row flex-jsb">
           <el-input class="search-input" type="password" v-model="form.pwd" placeholder="请输入密码"></el-input>
         </el-row>
-        <p class="dialog-item-label">验证码：</p>
+        <!-- 验证码栏块 -->
+        <!-- <p class="dialog-item-label">验证码：</p>
         <el-row class="dialog-item flex-row flex-jsb">
           <el-input class="dialog-item-code" v-model="form.code" placeholder="请输入验证码"></el-input>
           <img :src="captcha" alt="" class="dialog-item-getcode" @click="changeCaptcha">
-          <!-- <el-button v-show="isGetCode" @click="changeCode" class="dialog-item-getcode" type="info">(验证码图片)</el-button> -->
-        </el-row>
+        </el-row> -->
       </div>
     </el-form>
     <div class="dialog-footer">
@@ -82,14 +90,13 @@
       <el-form-item label="确认密码：" prop="checkPass">
         <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
       </el-form-item>
-      <el-form-item label="验证码" prop="code">
+      <!-- 验证码栏块 -->
+      <!-- <el-form-item label="验证码" prop="code">
         <el-row class="dialog-item flex-row flex-jsb">
           <el-input class="dialog-item-code2" v-model="ruleForm.code" placeholder="请输入验证码"></el-input>
           <img :src="captcha" alt="" class="dialog-item-getcode2" @click="changeCaptcha">
-          <!-- <el-button v-show="isGetCode2" @click="sendCode2" class="dialog-item-getcode2" type="info">发送验证码</el-button> -->
-          <!-- <el-button v-show="!isGetCode2" class="dialog-item-getcode" disabled type="info">{{ getCodeTime2 }}秒后重新发送</el-button> -->
         </el-row>
-      </el-form-item>
+      </el-form-item> -->
       <el-button class="register-submit" type="info" @click="submitForm('ruleForm')">注册</el-button>
     </el-form>
   </el-dialog>
@@ -128,6 +135,7 @@ export default {
       }
     }
     return {
+      isLogin: false, // 是否登录
       input: '',
       // 是否显示登录面板
       modelShow: false,
@@ -167,6 +175,12 @@ export default {
           { validator: checkAge, trigger: 'blur' }
         ]
       }
+    }
+  },
+  created() {
+    // 判断是否有token
+    if (!!this.$store.state.token) {
+      this.isLogin = true
     }
   },
   mounted() {
@@ -210,7 +224,7 @@ export default {
           this.modelShow = false
         }
       } else {
-        // 手机号登录
+        // 手机号密码登录
         var mobile_mode=/^1[34578]\d{9}$/;
         if (!mobile_mode.test(this.form.phone)) {
           this.$message({
@@ -219,8 +233,28 @@ export default {
           })
         } else {
           delete this.form.code
-          console.log(form)
-          this.modelShow = false
+          const data = {
+            phone: form.phone,
+            password: form.pwd
+          }
+          login(data).then(res => {
+            if(res.code === 2) {
+              this.$message({
+                type: "success",
+                message: res.msg
+              })
+              // 登录成功保存token到localstorage跟vuex中
+              const token = JSON.stringify(res.token)
+              localStorage.setItem('token', token)
+              this.$store.commit('setToken')
+              this.modelShow = false
+            }
+          }).catch(err => {
+            this.$message({
+                type: "info",
+                message: err.msg
+              })
+          })
         }
       }
     },
@@ -349,27 +383,28 @@ export default {
 </script>
 <style lang="scss" scoped>
   .tabbar{
-    height: 72px;
+    height: 56px;
     width: 100%;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+    background: white;
+    box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
     &-logo{
-      height: 72px;
+      height: 56px;
       width: 200px; 
       &-img{
-        width: 130px;
-        height: 72px;
+        width: 100px;
+        height: 56px;
       }
     }
     &-list{
-      height: 72px;
+      height: 56px;
       width: 600px;
       &-item{
         padding: 0 16px;
         color: #545C63;
         text-align: center;
         font-size: 16px;
-        height: 72px;
-        line-height: 72px;
+        height: 56px;
+        line-height: 56px;
         width: 100px;
         &:hover{
           cursor: pointer;
@@ -377,16 +412,22 @@ export default {
       }
     }
     &-search{
-      height: 72px;
+      height: 56px;
       width: 300px;
       &-input{
         width: 300px;
       }
+      &-button{
+        width: 50px;
+        margin-left: -10px;
+      }
     }
     &-login{
-      height: 72px;
-      width: 100px;
+      height: 56px;
+      width: 250px;
       padding: 0 20px;
+      margin-left: 100px;
+      position: relative;
       & a:hover{
         cursor:pointer;
       }
@@ -395,7 +436,7 @@ export default {
       }
       &-login{
         margin-right: 10px;
-        height: 72px;
+        height: 56px;
         width: 60px;
         &:hover{
           color: rgb(41, 166, 250);
@@ -403,11 +444,32 @@ export default {
       }
       &-register{
         margin-left: 20px;
-        height: 72px;
+        height: 56px;
         width: 60px;
         &:hover{
           color: rgb(41, 166, 250);
         }
+      }
+      &-box{
+        width: 50px;
+        height: 50px;
+        &-img{
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          cursor: pointer;
+        }
+      }
+      &-bigbox{
+        display: none;
+        background: white;
+        width: 250px;
+        height:400px;
+        position: absolute;
+        top: 50px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
+        z-index: 999;
       }
     }
   }

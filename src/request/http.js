@@ -13,7 +13,7 @@ if (process.env.NODE_ENV == 'development') {
 // 设置默认的请求超时时间
 axios.defaults.timeout = 10000;
 
-// 默认请求头
+// 默认请求头 (application/json application/x-www-form-urlencoded)
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;';
 
 // 请求拦截

@@ -7,6 +7,9 @@ export default createStore({
   mutations: {
     setTotalTitle(state, value) {
       state.totalTitle = value
+    },
+    setToken(state, value) {
+      state.token = JSON.parse(localStorage.getItem('token'))
     }
   },
   actions: {},
