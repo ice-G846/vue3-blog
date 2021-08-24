@@ -420,6 +420,7 @@ export default {
     },
     // 聚焦头像显示信息框
     showBigImg() {
+      this.$refs.loginBigBox.style.visibility = "visible"
       this.$refs.loginImg.style.width = "68px"
       this.$refs.loginImg.style.height = "68px"
       this.$refs.loginImg.style.top = "15px"
@@ -427,6 +428,7 @@ export default {
     },
     // 失焦头像隐藏信息框
     hiddenBigImg() {
+      this.$refs.loginBigBox.style.visibility = "hidden"
       this.$refs.loginImg.style.width = "40px"
       this.$refs.loginImg.style.height = "40px"
       this.$refs.loginImg.style.top = "0px"
@@ -532,20 +534,21 @@ export default {
           border-radius: 50%;
           cursor: pointer;
           z-index: 9999;
-          transition: all 0.2s;
-          transition-delay: 0.2s;
+          transition: all 0.15s;
+          transition-delay: 0.15s;
         }
       }
       &-bigbox{
         background: white;
         width: 250px;
         height: 290px;
+        visibility: hidden;
         opacity: 0;
         border-radius: 5px;
         box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
         position: absolute;
         top: 50px;
-        transition: all 0.2s ease 0.2s;
+        transition: all 0.15s ease 0.15s;
         &-title{
           width: 100%;
           font-size: 16px;
