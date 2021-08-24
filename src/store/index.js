@@ -10,6 +10,9 @@ export default createStore({
     },
     setToken(state, value) {
       state.token = JSON.parse(localStorage.getItem('token'))
+    },
+    clearToken(state) {
+      state.token = ''
     }
   },
   actions: {},

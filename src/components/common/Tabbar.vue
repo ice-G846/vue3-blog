@@ -1,24 +1,51 @@
 <template>
   <!-- tabbar导航栏 -->
   <div class="tabbar flex-row flex-jc">
-    <div class="tabbar-logo flex-row flex-ac">
+    <div class="tabbar-logo flex-row flex-ac flex-jc">
       <img class="tabbar-logo-img" src="/@/assets/logo.png" alt="logo">
     </div>
-    <div class="tabbar-list flex-row flex-ac">
+    <div class="tabbar-list flex-row flex-ac flex-jc">
       <div class="tabbar-list-item" v-for="(item, index) in 5" :key="index" @click="tabbarClick(index)">栏目{{ item }}</div>
     </div>
-    <div class="tabbar-search flex-row flex-ac">
+    <div class="tabbar-search flex-row flex-ac flex-jc">
       <el-input class="tabbar-search-input" v-model="input" placeholder="请输入内容"></el-input>
       <el-button class="tabbar-search-button" icon="el-icon-search"></el-button>
     </div>
     <div class="tabbar-login flex-row flex-jc flex-ac" v-if="isLogin">
-      <div class="tabbar-login-box flex-row flex-ac flex-jc">
-        <img class="tabbar-login-box-img" src="/@/assets/image/profile.png" alt="头像">
+      <div class="tabbar-login-box flex-row flex-ac flex-jc" @mouseenter="showBigImg" @mouseleave="hiddenBigImg">
+        <img ref="loginImg" class="tabbar-login-box-img" src="/@/assets/image/profile.png" alt="头像">
       </div>
-      <div class="tabbar-login-bigbox">
+      <!-- 头像下拉框 -->
+      <div ref="loginBigBox" class="tabbar-login-bigbox flex-col flex-ac" @mouseenter="showBigImg" @mouseleave="hiddenBigImg">
+        <div class="tabbar-login-bigbox-title">冰-G</div>
+        <hr>
+        <div class="tabbar-login-bigbox-classify flex-row flex-jsa">
+          <div class="tabbar-login-bigbox-classify-item flex-col flex-ac" v-for="(item, index) in classify" :key="index" @click="classifyClick(index)">
+            <div class="tabbar-login-bigbox-classify-item-count">{{ item.count }}</div>
+            <div class="tabbar-login-bigbox-classify-item-title">{{ item.title }}</div>
+          </div>
+        </div>
+        <hr>
+        <div class="tabbar-login-bigbox-options flex-col">
+          <div class="tabbar-login-bigbox-options-item flex-row" @click="optionClick(0)">
+            <span class="tabbar-login-bigbox-options-item-icon iconfont">&#xe72a;</span>
+            <span>个人中心</span>
+          </div>
+          <div class="tabbar-login-bigbox-options-item flex-row" @click="optionClick(1)">
+            <span class="tabbar-login-bigbox-options-item-icon iconfont">&#xe6c8;</span>
+            <span>我的收藏</span>
+          </div>
+        </div>
+        <hr>
+        <div class="tabbar-login-bigbox-options flex-col">
+          <div class="tabbar-login-bigbox-options-item flex-row" @click="logout">
+            <span class="tabbar-login-bigbox-options-item-icon iconfont">&#xe64d;</span>
+            <span>退出登录</span>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="tabbar-login flex-row flex-ac" v-if="!isLogin">
+    <div class="tabbar-login flex-row flex-ac flex-jc" v-if="!isLogin">
       <a class="tabbar-login-login flex-row flex-ac" @click="toLogin">登录</a>
       <span class="tabbar-login-cut">|</span>
       <a class="tabbar-login-register flex-row flex-ac" @click="toRegister">注册</a>
@@ -174,7 +201,24 @@ export default {
         phone: [
           { validator: checkAge, trigger: 'blur' }
         ]
-      }
+      },
+      classify: [
+        {
+          id: 0,
+          title: '文章',
+          count: 0
+        },
+        {
+          id: 1,
+          title: '关注',
+          count: 0
+        },
+        {
+          id: 2,
+          title: '粉丝',
+          count: 0
+        }
+      ], // 头像信息框标题分类
     }
   },
   created() {
@@ -248,6 +292,7 @@ export default {
               localStorage.setItem('token', token)
               this.$store.commit('setToken')
               this.modelShow = false
+              this.isLogin = true
             }
           }).catch(err => {
             this.$message({
@@ -268,10 +313,6 @@ export default {
       const num = Math.ceil(Math.random() * 100)
       this.captcha = 'https://xchoy.com/api.php/login/verify?' + num
       this.timer = new Date()
-    },
-    // 改变验证码
-    changeCode () {
-      console.log('变')
     },
     // 发送登录验证码
     sendCode() {
@@ -372,10 +413,41 @@ export default {
             })
           })
         } else {
-          console.log('error submit!!');
-          return false;
+          console.log('error submit!!')
+          return false
         }
-      });
+      })
+    },
+    // 聚焦头像显示信息框
+    showBigImg() {
+      this.$refs.loginImg.style.width = "68px"
+      this.$refs.loginImg.style.height = "68px"
+      this.$refs.loginImg.style.top = "15px"
+      this.$refs.loginBigBox.style.opacity = "1"
+    },
+    // 失焦头像隐藏信息框
+    hiddenBigImg() {
+      this.$refs.loginImg.style.width = "40px"
+      this.$refs.loginImg.style.height = "40px"
+      this.$refs.loginImg.style.top = "0px"
+      this.$refs.loginBigBox.style.opacity = "0"
+    },
+    // 头像下拉框类别跳转
+    classifyClick(index) {
+      console.log('类别跳转', index)
+    },
+    // 头像下拉框选项跳转
+    optionClick(index) {
+      console.log('选项跳转', index)
+    },
+    logout() {
+      localStorage.clear()
+      this.$store.commit('clearToken')
+      this.isLogin = false
+      this.$message({
+        type: 'success',
+        message: '成功退出登录'
+      })
     }
   }
 }
@@ -389,7 +461,7 @@ export default {
     box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
     &-logo{
       height: 56px;
-      width: 200px; 
+      width: 15%;
       &-img{
         width: 100px;
         height: 56px;
@@ -397,7 +469,8 @@ export default {
     }
     &-list{
       height: 56px;
-      width: 600px;
+      width: 45%;
+      min-width: 600px;
       &-item{
         padding: 0 16px;
         color: #545C63;
@@ -413,7 +486,7 @@ export default {
     }
     &-search{
       height: 56px;
-      width: 300px;
+      width: 20%;
       &-input{
         width: 300px;
       }
@@ -424,9 +497,8 @@ export default {
     }
     &-login{
       height: 56px;
-      width: 250px;
+      width: 20%;
       padding: 0 20px;
-      margin-left: 100px;
       position: relative;
       & a:hover{
         cursor:pointer;
@@ -456,20 +528,74 @@ export default {
         &-img{
           width: 40px;
           height: 40px;
+          position: relative;
           border-radius: 50%;
           cursor: pointer;
+          z-index: 9999;
+          transition: all 0.2s;
+          transition-delay: 0.2s;
         }
       }
       &-bigbox{
-        display: none;
         background: white;
         width: 250px;
-        height:400px;
-        position: absolute;
-        top: 50px;
+        height: 290px;
+        opacity: 0;
         border-radius: 5px;
         box-shadow: 0px 0px 5px rgba(0,0,0,0.1);
-        z-index: 999;
+        position: absolute;
+        top: 50px;
+        transition: all 0.2s ease 0.2s;
+        &-title{
+          width: 100%;
+          font-size: 16px;
+          font-weight: 600;
+          color: #585757;
+          margin-top: 30px;
+          text-align: center;
+        }
+        hr{
+          width: 100%;
+          margin: 10px 0;
+          border: none;
+          height: 1px;
+          background-color: #e7e7e7;
+        }
+        &-classify{
+          width:100%;
+          &-item{
+            width: 25%;
+            cursor: pointer;
+            &-count{
+              font-size: 18px;
+              font-weight: 600;
+              color: #585757;
+            }
+            &-title{
+              font-size: 14px;
+              color: #9e9e9e;
+              margin-top: 6px;
+            }
+          }
+        }
+        &-options{
+          width: 100%;
+          &-item{
+            width: 100%;
+            height: 40px;
+            line-height: 40px;
+            font-size: 14px;
+            color: #555666;
+            cursor: pointer;
+            &:hover{
+              background: #f0f0f5;
+            }
+            &-icon{
+              color: #a2a3af;
+              padding: 0 16px 0 30px;
+            }
+          }
+        }
       }
     }
   }
@@ -529,7 +655,6 @@ export default {
 .login-select{
   color: #606266;
 }
-
 // 修改el组件样式
 :deep(.tabbar-search-input){
   width: 250px;
@@ -560,4 +685,5 @@ export default {
 :deep(.el-form-item__label){
   text-align: center;
 }
+
 </style>
