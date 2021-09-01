@@ -27,7 +27,7 @@ export default {
         mobile: { show: true },   //要不要盯着你的鼠标看
         log: false,
       })
-  }, 1000)
-}
+    }, 1000)
+  }
 }
 </script>

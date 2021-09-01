@@ -5,7 +5,7 @@
       <img class="tabbar-logo-img" src="/@/assets/logo.png" alt="logo">
     </div>
     <div class="tabbar-list flex-row flex-ac flex-jc">
-      <div class="tabbar-list-item" v-for="(item, index) in 5" :key="index" @click="tabbarClick(index)">栏目{{ item }}</div>
+      <div class="tabbar-list-item" v-for="(item, index) in navbarList" :key="index" @click="tabbarClick(index)">{{ item.name }}</div>
     </div>
     <div class="tabbar-search flex-row flex-ac flex-jc">
       <el-input class="tabbar-search-input" v-model="input" placeholder="请输入内容"></el-input>
@@ -13,7 +13,7 @@
     </div>
     <div class="tabbar-login flex-row flex-jc flex-ac" v-if="isLogin">
       <div class="tabbar-login-box flex-row flex-ac flex-jc" @mouseenter="showBigImg" @mouseleave="hiddenBigImg">
-        <img ref="loginImg" class="tabbar-login-box-img" src="/@/assets/image/profile.png" alt="头像">
+        <img @click="toSetting" ref="loginImg" class="tabbar-login-box-img" src="/@/assets/image/profile.png" alt="头像">
       </div>
       <!-- 头像下拉框 -->
       <div ref="loginBigBox" class="tabbar-login-bigbox flex-col flex-ac" @mouseenter="showBigImg" @mouseleave="hiddenBigImg">
@@ -51,6 +51,7 @@
       <a class="tabbar-login-register flex-row flex-ac" @click="toRegister">注册</a>
     </div>
   </div>
+  <div class="empty"></div>
   <!-- 登录框 -->
   <el-dialog width="400px" v-model="modelShow" :key="timer">
     <el-form status-icon ref="ruleForm" :model="form">
@@ -79,7 +80,7 @@
         </el-row>
         <p class="dialog-item-label">密码：</p>
         <el-row class="dialog-item flex-row flex-jsb">
-          <el-input class="search-input" type="password" v-model="form.pwd" placeholder="请输入密码"></el-input>
+          <el-input class="search-input" type="password" v-model="form.pwd" placeholder="请输入密码" @keyup.enter="login(form)"></el-input>
         </el-row>
         <!-- 验证码栏块 -->
         <!-- <p class="dialog-item-label">验证码：</p>
@@ -130,7 +131,7 @@
 </template>
 
 <script>
-import { register, login} from '/@/request/api.js'
+import { register, login, getNavbarList} from '/@/request/api.js'
 export default {
   name: 'Tabbar',
   data() {
@@ -163,6 +164,7 @@ export default {
     }
     return {
       isLogin: false, // 是否登录
+      navbarList: [], // 导航栏列表
       input: '',
       // 是否显示登录面板
       modelShow: false,
@@ -226,6 +228,13 @@ export default {
     if (!!this.$store.state.token) {
       this.isLogin = true
     }
+    getNavbarList().then(res => {
+      if (res.code === 0) {
+        this.navbarList = res.data
+      }
+    }).catch(err => {
+      console.log(err)
+    })
   },
   mounted() {
     // 获取验证码图片
@@ -442,6 +451,7 @@ export default {
     optionClick(index) {
       console.log('选项跳转', index)
     },
+    // 注销登录
     logout() {
       localStorage.clear()
       this.$store.commit('clearToken')
@@ -450,13 +460,25 @@ export default {
         type: 'success',
         message: '成功退出登录'
       })
+    },
+    // 点击头像跳转到设置页
+    toSetting() {
+      this.$router.push({ name: 'setting' })
     }
   }
 }
 
 </script>
 <style lang="scss" scoped>
+  .empty{
+    height: 56px;
+    width: 100%;
+  }
   .tabbar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     height: 56px;
     width: 100%;
     background: white;

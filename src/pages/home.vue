@@ -5,14 +5,15 @@
 </template>
 
 <script>
-
+import { ref } from 'vue'
 export default {
   name: 'Home',
   components: {
   },
-  data() {
+  setup() {
+    const msg = ref('home-page')
     return {
-      msg: 'home-page'
+      msg
     }
   },
   methods: {
@@ -21,8 +22,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .content-title{
-    padding-top: 20px;
-    text-align: center;
+  .content{
+    &-title{
+      padding-top: 20px;
+      text-align: center;
+    }
   }
 </style>
