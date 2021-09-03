@@ -1,6 +1,7 @@
 *{
   margin: 0;
   padding: 0;
+  cursor: url(/src/assets/image/cursora.ico),auto;
 }
 body{
   background: #f4f5f7;

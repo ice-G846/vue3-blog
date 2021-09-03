@@ -5,6 +5,7 @@
 
 <script>
 import Tabbar from '/components/common/Tabbar.vue'
+import { showBackground } from './utils/backgroung.js'
 export default {
   name: 'App',
   components: {
@@ -28,6 +29,7 @@ export default {
         log: false,
       })
     }, 1000)
-  }
+    showBackground();
+  },
 }
 </script>

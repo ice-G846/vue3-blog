@@ -1,7 +1,6 @@
 <template>
   <div class="setting flex-col flex-ac">
     <div class="setting-title flex-row flex-jc flex-ac">
-      <h2>可加花里胡哨的动态图</h2>
     </div>
     <div class="setting-content">
       <h3>设置页</h3>
@@ -10,8 +9,12 @@
 </template>
 
 <script>
+import settingTop from '/@/components/setting/settingTop.vue'
 export default {
   name: 'Setting',
+  components: {
+    settingTop
+  },
   setup() {
 
   }
