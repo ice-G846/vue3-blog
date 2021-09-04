@@ -1,9 +1,10 @@
 <template>
   <div class="setting flex-col flex-ac">
     <div class="setting-title flex-row flex-jc flex-ac">
+      <img class="setting-title-img" src="/src/assets/image/banner.jpg" alt="">
     </div>
     <div class="setting-content">
-      <h3>设置页</h3>
+      <h3>设置也</h3>
     </div>
   </div>
 </template>
@@ -25,15 +26,18 @@ export default {
 .setting{
   width: 100%;
   &-title{
-    width: 100%;
+    width: 1300px;
     height: 200px;
-    border: 1px solid green;
+    &-img{
+      height: 100%;
+      opacity: .8;
+      z-index: -999;
+    }
   }
   &-content{
-    height: 300px;
-    width: 1200px;
-    background: #ffffff;
-    border: 1px solid #000;
+    height: 1300px;
+    width: 1300px;
+    background: rgba(255,255,255,.8);
   }
 }
 </style>

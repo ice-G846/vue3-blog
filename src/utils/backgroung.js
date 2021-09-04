@@ -1,3 +1,4 @@
+// 背景蜘蛛线特效
 export function showBackground() {
   //封装方法，压缩之后减少文件大小
   function get_attribute(node, attr, default_value) {
@@ -103,4 +104,93 @@ export function showBackground() {
   setTimeout(function () {
     draw_canvas();
   }, 10);
+}
+// 鼠标点击特效
+export function showClickIcon() {
+  var click_cnt = 0;
+  var $html = document.getElementsByTagName("html")[0];
+  var $body = document.getElementsByTagName("body")[0];
+  $html.onclick = function(e) {
+  var $elem = document.createElement("b");
+  $elem.style.color = "#E94F06";
+  $elem.style.zIndex = 99999;
+  $elem.style.position = "absolute";
+  $elem.style.select = "none";
+  var x = e.pageX;
+  var y = e.pageY;
+  $elem.style.left = (x - 10) + "px";
+  $elem.style.top = (y - 20) + "px";
+  clearInterval(anim);
+  switch (++click_cnt) {
+    case 10:
+    $elem.innerText = "OωO";
+    break;
+    case 20:
+    $elem.innerText = "(๑•́ ∀ •̀๑)";
+    break;
+    case 30:
+    $elem.innerText = "(๑•́ ₃ •̀๑)";
+    break;
+    case 40:
+    $elem.innerText = "(๑•̀_•́๑)";
+    break;
+    case 50:
+    $elem.innerText = "（￣へ￣）";
+    break;
+    case 60:
+    $elem.innerText = "(╯°口°)╯(┴—┴";
+    break;
+    case 70:
+    $elem.innerText = "૮( ᵒ̌皿ᵒ̌ )ა";
+    break;
+    case 80:
+    $elem.innerText = "╮(｡>口<｡)╭";
+    break;
+    case 90:
+    $elem.innerText = "( ง ᵒ̌皿ᵒ̌)ง⁼³₌₃";
+    break;
+    case 100:
+    case 101:
+    case 102:
+    case 103:
+    case 104:
+    case 105:
+    $elem.innerText = "(ꐦ°᷄д°᷅)";
+    break;
+    default:
+    $elem.innerText = "❤";
+    break;
+    }
+    $elem.style.fontSize = Math.random() * 10 + 8 + "px";
+    var increase = 0;
+    var anim;
+    setTimeout(function() {
+    anim = setInterval(function() {
+    if (++increase == 150) {
+      clearInterval(anim);
+      $body.removeChild($elem);
+    }
+    $elem.style.top = y - 20 - increase + "px";
+    $elem.style.opacity = (150 - increase) / 120;
+    }, 8);
+    }, 70);
+    $body.appendChild($elem);
+  };
+}
+
+// 展示看板娘娘
+export function showLady() {
+  setTimeout(() => {
+    window.L2Dwidget.init({
+      pluginRootPath: 'src/assets/live2dw/',
+      pluginJsPath: 'lib/',
+      pluginModelPath: 'live2d-widget-model-haru_2/assets/', //中间这个haru_2就是你的老婆,想换个老婆,换这个就可以了
+      tagMode: false, // 1-haru_1 2-haru_2 3-hijiki(黑猫) 4-shizuku 5-tororo(白猫) 6-z16(海军mm)
+      debug: false,
+      model: { jsonPath: 'src/assets/live2dw/live2d-widget-model-haru_2/assets/haru02.model.json' },
+      display: { position: 'letf', width: 250, height: 571 },  //调整大小,和位置
+      mobile: { show: true },   //要不要盯着你的鼠标看
+      log: false,
+    })
+  }, 500)
 }

@@ -1,8 +1,8 @@
 <template>
   <!-- tabbar导航栏 -->
   <div class="tabbar flex-row flex-jc">
-    <div class="tabbar-logo flex-row flex-ac flex-jc">
-      <img class="tabbar-logo-img" src="/@/assets/logo.png" alt="logo">
+    <div class="tabbar-logo flex-row flex-ac flex-jc" @click="toHome">
+      <img class="tabbar-logo-img" src="/@/assets/image/logo.png" alt="logo">
     </div>
     <div class="tabbar-list flex-row flex-ac flex-jc">
       <div class="tabbar-list-item" v-for="(item, index) in navbarList" :key="index" @click="tabbarClick(index)">{{ item.name }}</div>
@@ -257,9 +257,13 @@ export default {
     register() {
       console.log('register');
     },
-    // 栏目列表点击
+    // 导航栏列表点击
     tabbarClick(index) {
       console.log(index)
+      switch(index) {
+        case 0:
+          this.$router.push({ name: 'home' })
+      }
     },
     // 登录
     login(form) {
@@ -269,7 +273,8 @@ export default {
         if (!mobile_mode.test(this.form.phone)) {
           this.$message({
             type: 'info',
-            message: '请输入正确的手机号'
+            message: '请输入正确的手机号',
+            duration: 2000
           })
         } else {
           delete this.form.pwd
@@ -282,7 +287,8 @@ export default {
         if (!mobile_mode.test(this.form.phone)) {
           this.$message({
             type: 'info',
-            message: '请输入正确的手机号'
+            message: '请输入正确的手机号',
+            duration: 2000
           })
         } else {
           delete this.form.code
@@ -294,7 +300,8 @@ export default {
             if(res.code === 2) {
               this.$message({
                 type: "success",
-                message: res.msg
+                message: res.msg,
+                duration: 2000
               })
               // 登录成功保存token到localstorage跟vuex中
               const token = JSON.stringify(res.token)
@@ -306,7 +313,8 @@ export default {
           }).catch(err => {
             this.$message({
                 type: "info",
-                message: err.msg
+                message: err.msg,
+                duration: 2000
               })
           })
         }
@@ -329,7 +337,8 @@ export default {
       if (!mobile_mode.test(this.form.phone)) {
         this.$message({
           type: 'info',
-          message: '请输入正确的手机号'
+          message: '请输入正确的手机号',
+          duration: 2000
         })
       } else {
         // 60秒内不允许再发送验证码
@@ -355,7 +364,8 @@ export default {
       if (!mobile_mode.test(this.ruleForm.phone)) {
         this.$message({
             type: 'info',
-            message: '请输入正确的手机号'
+            message: '请输入正确的手机号',
+            duration: 2000
           })
       } else {
         // 60秒内不允许再发送验证码
@@ -405,20 +415,23 @@ export default {
             if(res.code === 0){
               this.$message({
                 type: 'success',
-                message: res.msg
+                message: res.msg,
+                duration: 2000
               })
               this.modelShow2 = false
             } else {
               // 注册失败
               this.$message({
                 type: 'info',
-                message: res.msg
+                message: res.msg,
+                duration: 2000
               })
             }
           }).catch(err=> {
             this.$message({
               type: 'info',
-              message: err
+              message: err,
+              duration: 2000
             })
           })
         } else {
@@ -458,12 +471,18 @@ export default {
       this.isLogin = false
       this.$message({
         type: 'success',
-        message: '成功退出登录'
+        message: '成功退出登录',
+        duration: 2000
       })
+      this.$router.push({ name: 'home' })
     },
     // 点击头像跳转到设置页
     toSetting() {
       this.$router.push({ name: 'setting' })
+    },
+    // 点击logo跳转到首页
+    toHome() {
+      this.$router.push({ name: 'home' })
     }
   }
 }
@@ -481,14 +500,15 @@ export default {
     right: 0;
     height: 56px;
     width: 100%;
-    background: white;
-    box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+    background: rgba(255, 255, 255, .7);
+    box-shadow: 0px 2px 4px rgba(143, 102, 102, 0.1);
     &-logo{
       height: 56px;
       width: 15%;
       &-img{
         width: 100px;
         height: 56px;
+        cursor: pointer;
       }
     }
     &-list{
@@ -497,14 +517,16 @@ export default {
       min-width: 600px;
       &-item{
         padding: 0 16px;
-        color: #545C63;
+        color: #3db3c3;
         text-align: center;
         font-size: 16px;
         height: 56px;
         line-height: 56px;
         width: 100px;
+        text-shadow: 3px 3px 5px rgba(0, 0, 0, .2);
         &:hover{
           cursor: pointer;
+          color: #ff8738;
         }
       }
     }
