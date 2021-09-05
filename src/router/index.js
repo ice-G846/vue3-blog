@@ -10,17 +10,17 @@ const router = createRouter({
     {
       path: '/home',
       name: 'home',
-      component: () => import("/@/pages/home.vue")
+      component: () => import("/@/pages/home/home.vue")
     },
     {
       path: '/login',
       name: 'login',
-      component: () => import("/@/pages/login.vue")
+      component: () => import("/@/pages/login/login.vue")
     },
     {
       path: '/setting',
       name: 'setting',
-      component: () => import("/@/pages/setting.vue"),
+      component: () => import("/@/pages/setting/setting.vue"),
       meta: {
         needLogin: true
       }

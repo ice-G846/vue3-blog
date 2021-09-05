@@ -122,11 +122,20 @@ export function showClickIcon() {
   $elem.style.top = (y - 20) + "px";
   clearInterval(anim);
   switch (++click_cnt) {
+    case 5:
+    $elem.innerText = "OωO";
+    break;
     case 10:
     $elem.innerText = "OωO";
     break;
+    case 15:
+    $elem.innerText = "(๑•́ ∀ •̀๑)";
+    break;
     case 20:
     $elem.innerText = "(๑•́ ∀ •̀๑)";
+    break;
+    case 25:
+    $elem.innerText = "(๑•́ ₃ •̀๑)";
     break;
     case 30:
     $elem.innerText = "(๑•́ ₃ •̀๑)";
@@ -188,7 +197,7 @@ export function showLady() {
       tagMode: false, // 1-haru_1 2-haru_2 3-hijiki(黑猫) 4-shizuku 5-tororo(白猫) 6-z16(海军mm)
       debug: false,
       model: { jsonPath: 'src/assets/live2dw/live2d-widget-model-haru_2/assets/haru02.model.json' },
-      display: { position: 'letf', width: 250, height: 571 },  //调整大小,和位置
+      display: { position: 'letf', width: 200, height: 456 },  //调整大小,和位置
       mobile: { show: true },   //要不要盯着你的鼠标看
       log: false,
     })
