@@ -20,8 +20,15 @@
         <div class="profile-common-top-icon"></div>
         <span>我的信息</span>
       </div>
-      <div class="profile-msg-content">
-        
+      <div class="profile-msg-content flex-col">
+        <div class="profile-msg-content-nickname flex-row flex-ac">
+          <div class="profile-msg-content-nickname-left">
+            <p class="profile-msg-content-nickname-left-txt">昵称:</p>
+          </div>
+          <div class="profile-msg-content-nickname-right">
+            <input type="text" class="profile-msg-content-nickname-right-input">
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -60,6 +67,7 @@ export default {
     border-bottom: 1px solid #ddd;
     &-content{
       width: 100%;
+      padding: 0 0 20px 0;
       &-left{
         &-img{
           width: 92px;
@@ -77,6 +85,49 @@ export default {
         &-txt2{
           font-size: 14px;
           color: rgb(153, 153, 153);
+        }
+      }
+    }
+  }
+  &-msg{
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+    &-content{
+      width: 100%;
+      padding: 20px 0px;
+      &-nickname{
+        width: 100%;
+        height: 40px;
+        &-left{
+          width: 100px;
+          height:40px;
+          line-height: 40px;
+          font-size: 14px;
+          color: #717171;
+          &-txt{
+            text-align: right;
+          }
+        }
+        &-right{
+          flex: 1;
+          height: 40px;
+          line-height: 40px;
+          padding-left: 20px;
+          &-input{
+            width: 225px;
+            height: 25px;
+            border-radius: 4px;
+            border: 1px solid #bfcbd9;
+            padding: 3px 10px;
+            font-size: 13px;
+            transition: all .2s;
+            &:hover{
+              border: 1px solid #8391a5;
+            }
+            &:focus{
+              border: 1px solid rgb(255, 197, 207);
+            }
+          }
         }
       }
     }
